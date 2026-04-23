@@ -1,18 +1,5 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
-let genAI: GoogleGenAI | null = null;
-
-function getGenAI() {
-  if (!genAI) {
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-      throw new Error("GEMINI_API_KEY is not defined. Please set it in your environment variables.");
-    }
-    genAI = new GoogleGenAI({ apiKey });
-  }
-  return genAI;
-}
-
 export interface UserHabits {
   studyHabits: string;
   fitnessRoutine: string;
@@ -43,8 +30,9 @@ export interface SimulationResult {
   futureSelfAdvice: string;
 }
 
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+
 export async function simulateFuture(habits: UserHabits): Promise<SimulationResult> {
-  const ai = getGenAI();
   const prompt = `
     Simulate a future life based on these current habits:
     Study/Work: ${habits.studyHabits}
@@ -114,7 +102,6 @@ export async function simulateFuture(habits: UserHabits): Promise<SimulationResu
 }
 
 export async function chatWithFutureSelf(history: { role: 'user' | 'model', parts: { text: string }[] }[], message: string, simulation: SimulationResult) {
-  const ai = getGenAI();
   const chat = ai.chats.create({
     model: "gemini-3-flash-preview",
     config: {

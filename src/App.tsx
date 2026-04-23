@@ -133,28 +133,16 @@ export default function App() {
     stressLevel: 5
   });
   const [result, setResult] = useState<SimulationResult | null>(null);
-  const [apiKeyMissing, setApiKeyMissing] = useState(false);
   const [chatHistory, setChatHistory] = useState<{ role: 'user' | 'model'; parts: { text: string }[] }[]>([]);
   const [userInput, setUserInput] = useState('');
   const [isChatLoading, setIsChatLoading] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!process.env.GEMINI_API_KEY) {
-      setApiKeyMissing(true);
-    }
-  }, []);
-
-  useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatHistory]);
 
   const handleStartSimulate = async () => {
-    if (!process.env.GEMINI_API_KEY) {
-      setApiKeyMissing(true);
-      alert("Missing GEMINI_API_KEY. Please add it to your AI Studio Secrets to proceed.");
-      return;
-    }
     setStep('simulating');
     try {
       const res = await simulateFuture(habits);
@@ -245,19 +233,6 @@ export default function App() {
                       <span className="text-accent italic font-normal lowercase tracking-tight">future</span> <br />
                       BEFORE YOU LIVE IT
                     </h1>
-
-                    {apiKeyMissing && (
-                      <div className="bg-accent/10 border border-accent/30 p-6 max-w-md">
-                        <p className="text-accent text-xs font-bold uppercase tracking-widest mb-3 flex items-center gap-2">
-                          <Sparkles className="w-4 h-4" /> Activation Required
-                        </p>
-                        <p className="text-white/60 text-[10px] leading-relaxed uppercase space-y-2">
-                          To inaugurate the trajectory engine, please configure your <span className="text-accent">GEMINI_API_KEY</span> in the <span className="text-white font-bold">Secrets</span> panel of the AI Studio sidebar.
-                          <br/><br/>
-                          <span className="opacity-40 italic">Note: The engine uses this connection to synthesize your future projections.</span>
-                        </p>
-                      </div>
-                    )}
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-end">
                       <p className="text-ink/60 text-lg leading-relaxed font-light max-w-md">

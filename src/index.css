@@ -18,7 +18,7 @@
 }
 
 .text-massive {
-  font-size: clamp(80px, 15vw, 140px);
+  font-size: clamp(48px, 15vw, 140px);
   line-height: 0.85;
   letter-spacing: -0.04em;
 }

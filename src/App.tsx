@@ -133,10 +133,17 @@ export default function App() {
     stressLevel: 5
   });
   const [result, setResult] = useState<SimulationResult | null>(null);
+  const [apiKeyMissing, setApiKeyMissing] = useState(false);
   const [chatHistory, setChatHistory] = useState<{ role: 'user' | 'model'; parts: { text: string }[] }[]>([]);
   const [userInput, setUserInput] = useState('');
   const [isChatLoading, setIsChatLoading] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!process.env.GEMINI_API_KEY) {
+      setApiKeyMissing(true);
+    }
+  }, []);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -175,7 +182,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-bg-editor text-ink font-sans flex antialiased">
       {/* Editorial Siderail */}
-      <aside className="fixed left-0 top-0 bottom-0 w-16 md:w-24 border-r border-line-subtle flex flex-col justify-between items-center py-12 z-50 bg-bg-editor">
+      <aside className="hidden md:flex fixed left-0 top-0 bottom-0 w-24 border-r border-line-subtle flex-col justify-between items-center py-12 z-50 bg-bg-editor">
         <div className="writing-vertical rotate-180 text-[10px] uppercase tracking-[0.4em] font-bold opacity-30 whitespace-nowrap">
           LifeLens Behavioral Projection 2.0
         </div>
@@ -186,7 +193,7 @@ export default function App() {
         </div>
       </aside>
 
-      <div className="flex-1 ml-16 md:ml-24 flex flex-col min-h-screen">
+      <div className="flex-1 ml-0 md:ml-24 flex flex-col min-h-screen">
         {/* Header */}
         <header className="relative z-10 p-8 md:p-12 border-b border-line-subtle flex justify-between items-start max-w-7xl w-full mx-auto">
           <div className="group cursor-pointer" onClick={() => setStep('landing')}>
@@ -233,6 +240,18 @@ export default function App() {
                       <span className="text-accent italic font-normal lowercase tracking-tight">future</span> <br />
                       BEFORE YOU LIVE IT
                     </h1>
+
+                    {apiKeyMissing && (
+                      <div className="bg-red-500/10 border border-red-500/30 p-6 max-w-md">
+                        <p className="text-red-400 text-xs font-bold uppercase tracking-widest mb-2 flex items-center gap-2">
+                          <AlertTriangle className="w-4 h-4" /> System Warning
+                        </p>
+                        <p className="text-white/60 text-[10px] leading-relaxed uppercase">
+                          The Trajectory Synthesis Engine requires a <span className="text-red-400">GEMINI_API_KEY</span>. 
+                          Please configure this in your environment settings (Vercel/Local) to inaugurate the simulation.
+                        </p>
+                      </div>
+                    )}
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-end">
                       <p className="text-ink/60 text-lg leading-relaxed font-light max-w-md">

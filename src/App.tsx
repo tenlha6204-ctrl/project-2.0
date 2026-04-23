@@ -150,6 +150,11 @@ export default function App() {
   }, [chatHistory]);
 
   const handleStartSimulate = async () => {
+    if (!process.env.GEMINI_API_KEY) {
+      setApiKeyMissing(true);
+      alert("Missing GEMINI_API_KEY. Please add it to your AI Studio Secrets to proceed.");
+      return;
+    }
     setStep('simulating');
     try {
       const res = await simulateFuture(habits);
@@ -242,13 +247,14 @@ export default function App() {
                     </h1>
 
                     {apiKeyMissing && (
-                      <div className="bg-red-500/10 border border-red-500/30 p-6 max-w-md">
-                        <p className="text-red-400 text-xs font-bold uppercase tracking-widest mb-2 flex items-center gap-2">
-                          <AlertTriangle className="w-4 h-4" /> System Warning
+                      <div className="bg-accent/10 border border-accent/30 p-6 max-w-md">
+                        <p className="text-accent text-xs font-bold uppercase tracking-widest mb-3 flex items-center gap-2">
+                          <Sparkles className="w-4 h-4" /> Activation Required
                         </p>
-                        <p className="text-white/60 text-[10px] leading-relaxed uppercase">
-                          The Trajectory Synthesis Engine requires a <span className="text-red-400">GEMINI_API_KEY</span>. 
-                          Please configure this in your environment settings (Vercel/Local) to inaugurate the simulation.
+                        <p className="text-white/60 text-[10px] leading-relaxed uppercase space-y-2">
+                          To inaugurate the trajectory engine, please configure your <span className="text-accent">GEMINI_API_KEY</span> in the <span className="text-white font-bold">Secrets</span> panel of the AI Studio sidebar.
+                          <br/><br/>
+                          <span className="opacity-40 italic">Note: The engine uses this connection to synthesize your future projections.</span>
                         </p>
                       </div>
                     )}
